@@ -12,19 +12,21 @@ import android.widget.GridView;
 
 public class MainActivity extends AppCompatActivity {
 
-    DbAdapter helper = new DbAdapter(getApplicationContext());
+    DatabaseHelper helper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        helper = new DatabaseHelper(getApplicationContext());
+        SQLiteDatabase db = helper.getWritableDatabase();
 
         setContentView(R.layout.activity_main);
 
         GridView gridView = (GridView) findViewById(R.id.gridview);
         gridView.setAdapter(new ImageAdapter(this));
 
-        Log.i("test",helper.getPlatById(2));
+        Log.i("test", getPlatById(2));
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
@@ -36,5 +38,17 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.startActivity(myIntent);
             }
         });
+    }
+
+    public String getPlatById(int Id) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        Cursor cur = db.rawQuery("SELECT nom from plat where id=" + Id + ";", new String[]{});
+        String result = "nok";
+        if (cur.moveToFirst()) {
+            result = cur.getString(0);
+        }
+        cur.close();
+        db.close();
+        return result;
     }
 }

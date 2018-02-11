@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var request = require('request');
 var app = express();
 var mysql = require('mysql');
+var Map = require("collections/map");
 
 var connection = mysql.createConnection({
   host     : 'localhost',
@@ -19,26 +20,35 @@ app.get("/commandes", function(req, res, next) {
 	var restaurant = req.query.restaurant;
 	var tableauResult= new Object();
 	connection.connect();	
-	connection.query('SELECT * FROM COMMANDE WHERE restaurant=?',restaurant,function(err, rows, fields) {
+	connection.query('SELECT CP.commande, C.taable, C.status, P.label, CP.quantite FROM PLAT AS P, COMMANDE AS C, COMMANDE_PLAT AS CP WHERE CP.plat=P.id AND C.id=CP.commande AND C.restaurant=?',restaurant,function(err, rows, fields) {
 		if (err) throw err;
 		for (var i = 0; i < rows.length; i++) {
-			var tableauCommande = new Object();				
-			tableauCommande["idCommande"]=rows[i].id;
-			tableauCommande["table"]=rows[i].taable;		
-			var tableauPlats = new Object();
-			connection.query('SELECT P.label, C.quantite FROM PLAT AS P, COMMANDE_PLAT AS C WHERE C.plat=P.id AND C.commande=?',rows[i].id,function(err, rows, fields) {
-				if (err) throw err;				
-				for (var j = 0; j < rows.length; j++) {
-					tableauPlats[rows[j].label]=rows[j].quantite;
-				}
-				tableauCommande["plats"]=JSON.stringify(tableauPlats);
-				console.log(tableauCommande);
-			});
-			tableauResult[rows[i].id]=JSON.stringify(tableauCommande);
+			if(rows[i].commande in tableauResult){
+				tableauResult[rows[i].commande]["plats"][rows[i].label]=rows[i].quantite;
+			}else{
+				var tableauCommande = new Object();
+				tableauCommande["table"]=rows[i].taable;
+				tableauCommande["status"]=rows[i].status;				
+				var tableauPlats = new Object();
+				tableauPlats[rows[i].label]=rows[i].quantite;				
+				tableauCommande["plats"]=tableauPlats;
+				tableauResult[rows[i].commande]=tableauCommande;
+			}
 		}
+		res.json(tableauResult);
 	});
-	connection.end();		
+	connection.end();
 });
+
+function strMapToObj(strMap) {
+    let obj = Object.create(null);
+    for (let [k,v] of strMap) {
+        // We don’t escape the key '__proto__'
+        // which can cause problems on older engines
+        obj[k] = v;
+    }
+    return obj;
+}
 
 app.get("/connexion", function(req, res, next) {
 	// On récupère les variables de la requête
@@ -46,6 +56,7 @@ app.get("/connexion", function(req, res, next) {
 	var mdp = req.query.mdp;
 	connection.connect();
 	connection.query("SELECT * FROM UTILISATEUR WHERE login=? AND mdp=?",[login,mdp],function (err,rows,fields) {
+		if (err) throw err;				
 		res.json(rows[0]);
 	});
 	connection.end();
@@ -58,6 +69,7 @@ app.get("/insertCommandePlat", function(req, res, next) {
 	var plat = req.query.plat
 	connection.connect();
 	connection.query("INSERT INTO COMMANDE_PLAT (commande,plat,quantite) VALUES ("+commande+","+plat+","+quantite+");", function (err, result) {
+		if (err) throw err;				
 		console.log("1 record inserted");
 	});
 	connection.end();

@@ -1,0 +1,14 @@
+{
+	"name": "TP2",
+	"version": "0.0.1",
+	"description": "TP2 Programmation Web en Licence PRISM, IUT d’Orsay",
+	"author": "Sébastien NOBILI <pipoprods@free.fr>",
+	"license": "cc-by-sa",
+	"dependencies": {
+		"body-parser": "*",
+		"collections": "^5.1.2",
+		"express": "*",
+		"mysql": "^2.15.0",
+		"request": "*"
+	}
+}

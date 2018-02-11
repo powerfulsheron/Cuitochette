@@ -6,6 +6,7 @@
 	"license": "cc-by-sa",
 	"dependencies": {
 		"body-parser": "*",
+		"collections": "^5.1.2",
 		"express": "*",
 		"mysql": "^2.15.0",
 		"request": "*"

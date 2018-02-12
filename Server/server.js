@@ -16,10 +16,16 @@ var connection = mysql.createConnection({
   database: 'cuitochette'
 });
 
+app.get("/plats", function(req, res, next) {
+	var restaurant = req.query.restaurant;
+	connection.query('SELECT * FROM PLAT WHERE restaurant=?',restaurant,function(err, rows, fields) {
+		res.json(rows);
+	});
+});
+
 app.get("/commandes", function(req, res, next) {
 	var restaurant = req.query.restaurant;
 	var tableauResult= new Object();
-	connection.connect();	
 	connection.query('SELECT CP.commande, C.taable, C.status, P.label, CP.quantite FROM PLAT AS P, COMMANDE AS C, COMMANDE_PLAT AS CP WHERE CP.plat=P.id AND C.id=CP.commande AND C.restaurant=?',restaurant,function(err, rows, fields) {
 		if (err) throw err;
 		for (var i = 0; i < rows.length; i++) {
@@ -37,7 +43,6 @@ app.get("/commandes", function(req, res, next) {
 		}
 		res.json(tableauResult);
 	});
-	connection.end();
 });
 
 function strMapToObj(strMap) {
@@ -54,12 +59,10 @@ app.get("/connexion", function(req, res, next) {
 	// On récupère les variables de la requête
 	var login = req.query.login;
 	var mdp = req.query.mdp;
-	connection.connect();
 	connection.query("SELECT * FROM UTILISATEUR WHERE login=? AND mdp=?",[login,mdp],function (err,rows,fields) {
 		if (err) throw err;				
 		res.json(rows[0]);
-	});
-	connection.end();
+	});	
 });
 
 app.get("/insertCommandePlat", function(req, res, next) {
@@ -67,12 +70,10 @@ app.get("/insertCommandePlat", function(req, res, next) {
 	var quantite = req.query.quantite;
 	var commande = req.query.commande;
 	var plat = req.query.plat
-	connection.connect();
 	connection.query("INSERT INTO COMMANDE_PLAT (commande,plat,quantite) VALUES ("+commande+","+plat+","+quantite+");", function (err, result) {
 		if (err) throw err;				
 		console.log("1 record inserted");
 	});
-	connection.end();
 });
 
 app.get("/insertCommande", function(req, res, next) {
@@ -81,13 +82,11 @@ app.get("/insertCommande", function(req, res, next) {
 	var table = req.query.table;
 	console.log("resto :"+restaurant);
 	console.log("table : "+table);
-	connection.connect();
 	connection.query("INSERT INTO COMMANDE (status, restaurant, taable) VALUES ('commande',"+restaurant+","+table+");", function (err, result) {
 		if (err) throw err;
 		console.log("1 record inserted");
 		res.json(result.insertId);
 	});
-	connection.end();
 });
 
 // application/x-www-form-urlencoded parser

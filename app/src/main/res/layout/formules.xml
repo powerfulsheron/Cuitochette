@@ -13,4 +13,26 @@
         android:layout_centerVertical="true" >
     </ListView>
 
+    <Button
+        android:text="Valider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:id="@+id/valider"
+        android:layout_marginEnd="55dp"
+        android:layout_marginBottom="18dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@+id/reset" />
+
+    <Button
+        android:text="Reset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:id="@+id/reset"
+        android:layout_marginEnd="199dp"
+        android:layout_alignBaseline="@+id/valider"
+        android:layout_alignBottom="@+id/valider"
+        android:layout_alignParentEnd="true" />
+
 </RelativeLayout>

@@ -33,9 +33,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.connection);
 
 
-        Log.i("test", getPlatById(2));
-
-
         Button button = (Button) findViewById(R.id.valider);
         button.setOnClickListener(newListener);
 
@@ -53,8 +50,8 @@ public class MainActivity extends AppCompatActivity {
 
             if (Formules.checkCo(id_t,pwd_t)) {
 
-
-                setContentView(R.layout.activity_main);
+                Intent intent = new Intent(MainActivity.this, Formules.class);
+                startActivity(intent);
 
 
             } else {
@@ -69,19 +66,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
     };
-
-    public String getPlatById(int Id) {
-        SQLiteDatabase db = helper.getWritableDatabase();
-        Cursor cur = db.rawQuery("SELECT nom from plat where id=" + Id + ";", new String[]{});
-        String result = "nok";
-        if (cur.moveToFirst()) {
-            result = cur.getString(0);
-        }
-        cur.close();
-        db.close();
-        return result;
-    }
-
 
 
 

@@ -1,5 +1,5 @@
 // Port to listen requests from
-var port = 1234;
+var port = 3306;
 
 // Modules to be used
 var express = require('express');
@@ -12,8 +12,9 @@ var Map = require("collections/map");
 var connection = mysql.createConnection({
   host     : 'localhost',
   user     : 'root',
-  password : '',
-  database: 'cuitochette'
+  password : 'root',
+  database: 'cuitochette',
+  	socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock'
 });
 
 app.get("/plats", function(req, res, next) {

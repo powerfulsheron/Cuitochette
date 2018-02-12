@@ -1,7 +1,13 @@
 Url types
 
-
 http://localhost:1234/commandes?restaurant=1
+
+retour json:
+
+{"1":{"table":1,"status":"commande","plats":[{"label":"Bourguignon de Boeuf","quantite":3},{"label":"Mousse au Chocolat","quantite":3}]},"2":{"table":1,"status":"entreeEnvoye","plats":[{"label":"Salade de Crevettes","quantite":2},{"label":"Bourguignon de Boeuf","quantite":2}]},"3":{"table":1,"status":"platEnvoye","plats":[{"label":"Columbo de Porc","quantite":3},{"label":"Bourguignon de Boeuf","quantite":1},{"label":"Mousse au Chocolat","quantite":4}]},"4":{"table":1,"status":"dessertEnvoye","plats":[{"label":"Salade de Crevettes","quantite":1},{"label":"Bourguignon de Boeuf","quantite":1}]}}
+
+
+http://localhost:1234/commandes2?restaurant=1
 
 retour json : 
 
@@ -23,6 +29,7 @@ retourne l'id de la commande ex:13
 http://localhost:1234/inserCommandePlat?commande=1&plat=4?quantite=2
 
 ne retourne rien
+
 
 http://localhost:3306/plats?restaurant=1
 

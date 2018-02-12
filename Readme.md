@@ -24,3 +24,6 @@ http://localhost:1234/inserCommandePlat?commande=1&plat=4?quantite=2
 
 ne retourne rien
 
+http://localhost:3306/plats?restaurant=1
+
+[{"id":1,"label":"Salade de Crevettes","description":"Une salade fraiche du marché avec des crevettes du poissonnier","type":"entree\t","restaurant":1},{"id":2,"label":"Bourguignon de Boeuf","description":"Sauté de boeuf mijoté pendant 5 heures","type":"plat","restaurant":1},{"id":3,"label":"Mousse au Chocolat","description":"75% de chocolat","type":"dessert","restaurant":1},{"id":4,"label":"Nems","description":"Les vrais nems du Vietnam","type":"entree","restaurant":1},{"id":5,"label":"Columbo de Porc","description":"La vraie recette Antillaise","type":"plat","restaurant":1},{"id":6,"label":"Gateau à l'Ananas","description":"Fait maison le matin même","type":"dessert","restaurant":1},{"id":7,"label":"Fanta","description":"Canette de 33cl","type":"boisson","restaurant":1},{"id":8,"label":"Coca","description":"Canette de 33cl","type":"boisson","restaurant":1}]

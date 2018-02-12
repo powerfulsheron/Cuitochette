@@ -18,8 +18,19 @@ var connection = mysql.createConnection({
 
 app.get("/plats", function(req, res, next) {
 	var restaurant = req.query.restaurant;
+	var plats = [];
+	var result = new Object();
 	connection.query('SELECT * FROM PLAT WHERE restaurant=?',restaurant,function(err, rows, fields) {
-		res.json(rows);
+		for (var i = 0; i < rows.length; i++) {
+			var plat = new Object();			
+			plat["id"]=rows[i].id;
+			plat["label"]=rows[i].label;
+			plat["description"]=rows[i].description;
+			plat["type"]=rows[i].type;
+			plats.push(plat);	
+		}
+		result["plats"]=plats;
+		res.json(result);
 	});
 });
 

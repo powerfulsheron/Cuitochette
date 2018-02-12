@@ -155,40 +155,4 @@ public class Formules extends Activity {
         }
         return true;
     }
-
-
-    public static boolean checkCo(String id_t, String pwd_t){
-
-        Boolean result = false;
-        String localLoginString = "{\"utilisateur\":[{\"id\":2,\"login\":\"chef\",\"mdp\":\"12345\",\"type\":\"chef\"}]}";
-
-
-        try{
-            JSONObject jsonResponse = new JSONObject(localLoginString);
-            JSONArray jsonMainNode = jsonResponse.optJSONArray("utilisateur");
-
-
-
-            JSONObject jsonChildNode = jsonMainNode.getJSONObject(0);
-            String name = jsonChildNode.optString("login");
-            String number = jsonChildNode.optString("mdp");
-            Log.d("login",name+"  "+number);
-            Log.d("login",id_t+"  "+pwd_t);
-
-            if(name.equals(id_t) && number.equals(pwd_t)){
-
-
-                result = true;
-            }
-
-
-        }
-        catch(JSONException e){
-            Log.d("error", e.toString());
-        }
-
-
-        return result;
-    }
-
 }

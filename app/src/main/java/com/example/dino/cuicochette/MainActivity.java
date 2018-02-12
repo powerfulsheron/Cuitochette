@@ -18,10 +18,11 @@ public class MainActivity extends AppCompatActivity {
 
     DatabaseHelper helper;
 
-    EditText id ;
-    String id_t ;
-    EditText pwd ;
-    String pwd_t ;
+    EditText id;
+    String id_t;
+    EditText pwd;
+    String pwd_t;
+    String role;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
         SQLiteDatabase db = helper.getWritableDatabase();
 
         setContentView(R.layout.connection);
+
+
+        Log.i("test", getPlatById(2));
 
 
         Button button = (Button) findViewById(R.id.valider);
@@ -46,12 +50,21 @@ public class MainActivity extends AppCompatActivity {
             id_t = id.getText().toString();
             pwd = findViewById(R.id.PDW);
             pwd_t = pwd.getText().toString();
-            Log.d("loginenvoye",id_t+"  "+pwd_t+"  "+id+ "  "+pwd);
+            Log.d("loginenvoye", id_t + "  " + pwd_t + "  " + id + "  " + pwd);
 
-            if (Formules.checkCo(id_t,pwd_t)) {
+            Intent intent1 = new Intent(MainActivity.this, Formules.class);
 
-                Intent intent = new Intent(MainActivity.this, Formules.class);
-                startActivity(intent);
+
+            if (login.Companion.checkCo(id_t, pwd_t)) {
+
+                if (login.Companion.getRole().equals("client")) {
+                    setContentView(R.layout.formules);
+                }else{
+                    setContentView(R.layout.plats);
+                }
+                intent1.putExtra("restaurant",login.Companion.getResto());
+                intent1.putExtra("num_table",login.Companion.getTable());
+
 
 
             } else {
@@ -63,10 +76,22 @@ public class MainActivity extends AppCompatActivity {
                 toast.show();
             }
 
+            startActivity(intent1);
 
         }
     };
 
+    public String getPlatById(int Id) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        Cursor cur = db.rawQuery("SELECT nom from plat where id=" + Id + ";", new String[]{});
+        String result = "nok";
+        if (cur.moveToFirst()) {
+            result = cur.getString(0);
+        }
+        cur.close();
+        db.close();
+        return result;
+    }
 
 
 }

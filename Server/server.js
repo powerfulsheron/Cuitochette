@@ -18,12 +18,23 @@ var connection = mysql.createConnection({
 
 app.get("/plats", function(req, res, next) {
 	var restaurant = req.query.restaurant;
+	var plats = [];
+	var result = new Object();
 	connection.query('SELECT * FROM PLAT WHERE restaurant=?',restaurant,function(err, rows, fields) {
-		res.json(rows);
+		for (var i = 0; i < rows.length; i++) {
+			var plat = new Object();			
+			plat["id"]=rows[i].id;
+			plat["label"]=rows[i].label;
+			plat["description"]=rows[i].description;
+			plat["type"]=rows[i].type;
+			plats.push(plat);	
+		}
+		result["plats"]=plats;
+		res.json(result);
 	});
 });
 
-app.get("/commandes", function(req, res, next) {
+app.get("/commandes2", function(req, res, next) {
 	var restaurant = req.query.restaurant;
 	var tableauResult= new Object();
 	connection.query('SELECT CP.commande, C.taable, C.status, P.label, CP.quantite FROM PLAT AS P, COMMANDE AS C, COMMANDE_PLAT AS CP WHERE CP.plat=P.id AND C.id=CP.commande AND C.restaurant=?',restaurant,function(err, rows, fields) {
@@ -37,6 +48,34 @@ app.get("/commandes", function(req, res, next) {
 				tableauCommande["status"]=rows[i].status;				
 				var tableauPlats = new Object();
 				tableauPlats[rows[i].label]=rows[i].quantite;				
+				tableauCommande["plats"]=tableauPlats;
+				tableauResult[rows[i].commande]=tableauCommande;
+			}
+		}
+		res.json(tableauResult);
+	});
+});
+
+app.get("/commandes", function(req, res, next) {
+	var restaurant = req.query.restaurant;
+	var tableauResult= new Object();
+	connection.query('SELECT CP.commande, C.taable, C.status, P.label, CP.quantite FROM PLAT AS P, COMMANDE AS C, COMMANDE_PLAT AS CP WHERE CP.plat=P.id AND C.id=CP.commande AND C.restaurant=?',restaurant,function(err, rows, fields) {
+		if (err) throw err;
+		for (var i = 0; i < rows.length; i++) {
+			if(rows[i].commande in tableauResult){
+				var plat = new Object();
+				plat["label"]=rows[i].label;
+				plat["quantite"]=rows[i].quantite;
+				tableauResult[rows[i].commande]["plats"].push(plat);
+			}else{
+				var tableauCommande = new Object();
+				tableauCommande["table"]=rows[i].taable;
+				tableauCommande["status"]=rows[i].status;				
+				var tableauPlats = [];
+				var plat = new Object();
+				plat["label"]=rows[i].label;
+				plat["quantite"]=rows[i].quantite;
+				tableauPlats.push(plat);
 				tableauCommande["plats"]=tableauPlats;
 				tableauResult[rows[i].commande]=tableauCommande;
 			}

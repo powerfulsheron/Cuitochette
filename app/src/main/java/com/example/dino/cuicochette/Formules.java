@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -38,6 +39,8 @@ public class Formules extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.formules);
+
+
 
         initList();
         listView = (ListView)findViewById(R.id.listView1);
@@ -98,4 +101,38 @@ public class Formules extends Activity {
     }
 
 
+
+   public static boolean checkCo(String id_t, String pwd_t){
+
+        Boolean result = false;
+        String localLoginString = "{\"utilisateur\":[{\"id\":2,\"login\":\"chef\",\"mdp\":\"12345\",\"type\":\"chef\"}]}";
+
+
+        try{
+            JSONObject jsonResponse = new JSONObject(localLoginString);
+            JSONArray jsonMainNode = jsonResponse.optJSONArray("utilisateur");
+
+
+
+                JSONObject jsonChildNode = jsonMainNode.getJSONObject(0);
+                String name = jsonChildNode.optString("login");
+                String number = jsonChildNode.optString("mdp");
+                Log.d("login",name+"  "+number);
+                Log.d("login",id_t+"  "+pwd_t);
+
+            if(name.equals(id_t) && number.equals(pwd_t)){
+
+
+                result = true;
+            }
+
+
+        }
+        catch(JSONException e){
+            Log.d("error", e.toString());
+        }
+
+
+        return result;
+    }
 }

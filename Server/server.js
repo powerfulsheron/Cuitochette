@@ -64,8 +64,8 @@ app.get("/commandes", function(req, res, next) {
 		for (var i = 0; i < rows.length; i++) {
 			if(rows[i].commande in tableauResult){
 				var plat = new Object();
-				plat["label"]=[rows[i].label];
-				plat["quantite"]=[rows[i].quantite];
+				plat["label"]=rows[i].label;
+				plat["quantite"]=rows[i].quantite;
 				tableauResult[rows[i].commande]["plats"].push(plat);
 			}else{
 				var tableauCommande = new Object();
@@ -73,8 +73,8 @@ app.get("/commandes", function(req, res, next) {
 				tableauCommande["status"]=rows[i].status;				
 				var tableauPlats = [];
 				var plat = new Object();
-				plat["label"]=[rows[i].label];
-				plat["quantite"]=[rows[i].quantite];
+				plat["label"]=rows[i].label;
+				plat["quantite"]=rows[i].quantite;
 				tableauPlats.push(plat);
 				tableauCommande["plats"]=tableauPlats;
 				tableauResult[rows[i].commande]=tableauCommande;

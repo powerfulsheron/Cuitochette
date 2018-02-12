@@ -32,10 +32,11 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 Intent myIntent = null;
                 if (position == 0) {
+                    myIntent  = new Intent(MainActivity.this, Formules.class);
                 } else if (position == 1) {
                 }
 
-                MainActivity.this.startActivity(myIntent);
+                startActivity(myIntent);
             }
         });
     }

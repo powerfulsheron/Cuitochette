@@ -6,15 +6,22 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by mvalier on 10/03/2017.
@@ -22,17 +29,9 @@ import java.util.List;
 
 public class Formules extends Activity {
 
-
-    DatabaseHelper helper;
-
-    TextView textView;
+    private String localPlatString = "{\"commande\":[{\"table\":1,\"status\":\"commande\",\"plats\":{\"Bourguignon de Boeuf\":3,\"Mousse au Chocolat\":3}}]}";
 
     ListView listView;
-
-    JSONAdapter jsonAdapter;
-
-
-    JSONArray listPlat = new JSONArray();
 
 
     @Override
@@ -40,44 +39,42 @@ public class Formules extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.formules);
 
-        listPlat = new JSONArray();
+        initList();
+        listView = (ListView)findViewById(R.id.listView1);
 
-        listView = (ListView)findViewById(R.id.lstText);
+        SimpleAdapter simpleAdapter = new SimpleAdapter(this, countryList, android.R.layout.simple_list_item_1, new String[] {"commande"}, new int[] {android.R.id.text1});
 
-        jsonAdapter = new JSONAdapter(Formules.this, listPlat);
-
-        listView.setAdapter(jsonAdapter);
+        listView.setAdapter(simpleAdapter);
 
 
     }
-/*
 
-    public String getAllPlat() {
-        SQLiteDatabase db = helper.getWritableDatabase();
-        Cursor cur = db.rawQuery("SELECT nom from plat ;", new String[]{});
-        String result = "nok";
-        if (cur.moveToFirst()) {
-            result = cur.getString(0);
+    List<Map<String,String>> countryList = new ArrayList<Map<String,String>>();
+    private void initList(){
+
+        try{
+            JSONObject jsonResponse = new JSONObject(localPlatString);
+            JSONArray jsonMainNode = jsonResponse.optJSONArray("commande");
+
+            for(int i = 0; i<jsonMainNode.length();i++){
+                JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
+                String name = jsonChildNode.optString("table");
+                String number = jsonChildNode.optString("plats");
+                String outPut = name + " " +number;
+                countryList.add(plat("commande", outPut));
+            }
         }
-        cur.close();
-        db.close();
-        return result;
-
-    }
-
-    public String getPlatById(int Id) {
-        SQLiteDatabase db = helper.getWritableDatabase();
-        Cursor cur = db.rawQuery("SELECT nom from plat where id=" + Id + ";", new String[]{});
-        String result = "nok";
-        if (cur.moveToFirst()) {
-            result = cur.getString(0);
+        catch(JSONException e){
+            Log.d("error", e.toString());
         }
-        cur.close();
-        db.close();
-        return result;
     }
 
-*/
+    private HashMap<String, String> plat(String name, String number){
+        HashMap<String, String> employeeNameNo = new HashMap<String, String>();
+        employeeNameNo.put(name, number);
+        return employeeNameNo;
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

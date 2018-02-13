@@ -3,7 +3,6 @@ package com.example.dino.cuicochette
 import android.util.Log
 import org.json.JSONException
 import org.json.JSONObject
-import java.net.URL
 
 /**
  * Created by bapti on 12/02/2018.
@@ -11,36 +10,62 @@ import java.net.URL
 class login {
 
     companion object {
-        fun checkCo(id_t: String, pwd_t: String): String?  {
-
-            var role : String? = ""
-            val localLoginString = "http://10.0.2.2:3306/connexion?login="+id_t+"&mdp="+pwd_t;
+        fun checkCo(id_t: String, pwd_t: String): Boolean {
+            var result: String? = ""
+            var ok: Boolean = false
+            val localLoginString = "http://10.0.2.2:3306/connexion?login=chef&mdp=12345"
 
             try {
-                val result = URL(localLoginString).readText()
-                val jsonObject = JSONObject(result)
-                val type = jsonObject.getString("type")
-                val restaurant  = jsonObject.getInt("restaurant")
+                val jsonResponse = JSONObject(localLoginString)
+                val jsonMainNode = jsonResponse.optJSONArray("utilisateur")
 
 
-                role = getRole(type, restaurant)
+                val jsonChildNode = jsonMainNode.getJSONObject(0)
+                val name = jsonChildNode.optString("login")
+                val number = jsonChildNode.optString("mdp")
+                Log.d("login", name + "  " + number)
+                Log.d("login", id_t + "  " + pwd_t)
 
+                if (name == id_t && number == pwd_t) {
+                    ok = true
+                }
             } catch (e: JSONException) {
                 Log.d("error", e.toString())
             }
-            return role
+            return ok!!
         }
 
 
-        fun getRole(type: String , restaurant : Int): String? {
+        fun getRole(): String? {
             var result = ""
+            val localLoginString = "http://10.0.2.2:3306/connexion?login=chef&mdp=12345"
+            val jsonResponse = JSONObject(localLoginString)
+            val jsonMainNode = jsonResponse.optJSONArray("utilisateur")
 
 
+            val jsonChildNode = jsonMainNode.getJSONObject(0)
 
-            if (type.equals("chef")) result = "chef"
-            if (type.equals("table")) result = "client"
+            val role = jsonChildNode.optString("type")
+
+            if (role.equals("chef")) result = "chef"
+            if (role.equals("client")) result = "client"
 
             return result
+        }
+
+        fun getResto() : Int?{
+
+            val localLoginString = "http://10.0.2.2:3306/connexion?login=chef&mdp=12345"
+            val jsonResponse = JSONObject(localLoginString)
+            val jsonMainNode = jsonResponse.optJSONArray("utilisateur")
+
+
+            val jsonChildNode = jsonMainNode.getJSONObject(0)
+
+            val role = jsonChildNode.optInt("restaurant")
+
+
+            return role
         }
 
         fun getTable() : Int?{
@@ -56,26 +81,6 @@ class login {
 
 
             return table
-        }
-
-
-        fun getIdResto(id_t: String, pwd_t: String): Int?  {
-
-            var restaurant : Int? = -1
-            val localLoginString = "http://10.0.2.2:3306/connexion?login="+id_t+"&mdp="+pwd_t;
-
-            try {
-                val result = URL(localLoginString).readText()
-                val jsonObject = JSONObject(result)
-                restaurant  = jsonObject.getInt("restaurant")
-
-
-
-
-            } catch (e: JSONException) {
-                Log.d("error", e.toString())
-            }
-            return restaurant
         }
     }
 }

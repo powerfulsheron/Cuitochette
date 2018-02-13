@@ -3,6 +3,7 @@ package com.example.dino.cuicochette;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -34,7 +36,7 @@ import java.util.Map;
  * Created by mvalier on 10/03/2017.
  */
 
-public class Formules extends Activity {
+public class Formules extends AppCompatActivity {
 
     //Ne pas oublier de changer le port
     private String localPlatString = "http://10.0.2.2:3306/plats?restaurant=1";
@@ -55,6 +57,7 @@ public class Formules extends Activity {
         setContentView(R.layout.formules);
 
         initList();
+
         listView = (ListView) findViewById(R.id.listView1);
         courant = new ArrayList<String>(Arrays.asList("none"));
         valider = (Button) findViewById(R.id.valider);
@@ -87,7 +90,7 @@ public class Formules extends Activity {
                 for (int i = 0; i < courant.size( ) - 1; i++) {
 
                 }
-                finish();
+                Toast.makeText(getApplicationContext(), "Commande envoyé en cuisine", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -134,6 +137,7 @@ public class Formules extends Activity {
         return employeeNameNo;
     }
 
+/*
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -155,6 +159,7 @@ public class Formules extends Activity {
         }
         return true;
     }
+*/
 
 /*
     public static boolean checkCo(String id_t, String pwd_t){

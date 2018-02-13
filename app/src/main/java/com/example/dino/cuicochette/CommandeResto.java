@@ -1,8 +1,9 @@
 package com.example.dino.cuicochette;
 
-import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,13 +32,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by mvalier on 10/03/2017.
+ * Created by dino on 13/02/2018.
  */
 
-public class Formules extends Activity {
+public class CommandeResto extends AppCompatActivity {
 
     //Ne pas oublier de changer le port
-    private String localPlatString = "http://10.0.2.2:3306/plats?restaurant=1";
+    private String localCommandeString = "http://10.0.2.2:3306/commandes?restaurant=1";
 
     ListView listView;
     Button valider;
@@ -48,11 +49,13 @@ public class Formules extends Activity {
     static List<String> resumeFormules = new ArrayList<String>();
     Gson g = new Gson();
     JsonParser parser = new JsonParser();
+    String label;
+    String quantite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.formules);
+        setContentView(R.layout.commanderesto);
 
         initList();
         listView = (ListView) findViewById(R.id.listView1);
@@ -77,7 +80,7 @@ public class Formules extends Activity {
                 }
             }
         });
-
+/*
         valider.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,7 +104,7 @@ public class Formules extends Activity {
                     courant.remove(1);
                 }
             }
-        });
+        });*/
 
     }
 
@@ -110,21 +113,33 @@ public class Formules extends Activity {
     private void initList() {
 
         Ion.with(getApplicationContext())
-                .load(localPlatString)
+                .load(localCommandeString)
                 .asJsonObject()
                 .setCallback(new FutureCallback<JsonObject>() {
                     @Override
                     public void onCompleted(Exception e, JsonObject result) {
                         JsonObject jObject = parser.parse(String.valueOf(result)).getAsJsonObject();
-                        JsonArray jArray =  jObject.getAsJsonArray("plats");
-                        for (JsonElement elem : jArray) {
-                            JsonObject jObject2 = elem.getAsJsonObject();
-                            String label = String.valueOf(jObject2.get("label"));
-                            Log.d("elem", String.valueOf(label));
-                            countryList.add(plat("commande", label));
+                        for (Map.Entry<String, JsonElement> entry: jObject.entrySet()) {
+                            countryList.add(plat("commande", "Commande n°"+entry.getKey()));
+                            JsonObject child = parser.parse(String.valueOf(entry.getValue())).getAsJsonObject();
+                            String status = String.valueOf(child.get("status"));
+                            Log.i("status", status);
+                            String plats= String.valueOf(child.get("plats"));
+                            Log.i("plats", plats);
+                            JsonArray jsonArray = (JsonArray) child.get("plats");
+                            for (Object object: jsonArray){
+                                JsonObject jsonObject = (JsonObject) object;
+                                label = String.valueOf(((JsonObject) object).get("label"));
+                                quantite = String.valueOf(((JsonObject) object).get("quantite"));
+                                Log.i("label", label);
+                                Log.i("quantite",  quantite);
+                                Log.i("array", String.valueOf(jsonArray));
+                                countryList.add(plat("commande", label + " Quantité : "+quantite));
+                            }
                         }
                     }
                 });
+
 
     }
 
@@ -145,18 +160,14 @@ public class Formules extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.accueil:
-                startActivity(new Intent(Formules.this, MainActivity.class));
-                break;
-
-            case R.id.formules:
-                startActivity(new Intent(Formules.this, Formules.class));
+                startActivity(new Intent(CommandeResto.this, MainActivity.class));
                 break;
 
         }
         return true;
     }
 
-/*
+
     public static boolean checkCo(String id_t, String pwd_t){
 
         Boolean result = false;
@@ -189,6 +200,7 @@ public class Formules extends Activity {
 
 
         return result;
-    }*/
+    }
+
 
 }

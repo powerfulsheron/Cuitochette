@@ -46,15 +46,23 @@ public class MainActivity extends AppCompatActivity {
             id_t = id.getText().toString();
             pwd = findViewById(R.id.PDW);
             pwd_t = pwd.getText().toString();
-            Log.d("loginenvoye",id_t+"  "+pwd_t+"  "+id+ "  "+pwd);
+            Log.d("loginenvoye", id_t + "  " + pwd_t + "  " + id + "  " + pwd);
 
-            if (Formules.checkCo(id_t,pwd_t)) {
+            Intent intent1 = new Intent(MainActivity.this, Formules.class);
 
-                Intent intent = new Intent(MainActivity.this, Formules.class);
-                startActivity(intent);
+            int idResto = login.Companion.getIdResto(id_t, pwd_t);
+            if (login.Companion.checkCo(id_t, pwd_t).equals("table")) {
+                intent1.putExtra("num_table", login.Companion.getTable());
+
+                intent1.putExtra("numResto", login.Companion.getIdResto(id_t, pwd_t));
+                setContentView(R.layout.formules);
+            } else if (login.Companion.checkCo(id_t, pwd_t).equals("chef")) {
+                intent1.putExtra("numResto", login.Companion.getIdResto(id_t, pwd_t));
+                setContentView(R.layout.plats);
+            }
 
 
-            } else {
+            {
                 Context context = getApplicationContext();
                 CharSequence text = "Erreur d'authentification";
                 int duration = Toast.LENGTH_SHORT;
@@ -62,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
                 Toast toast = Toast.makeText(context, text, duration);
                 toast.show();
             }
+
+            startActivity(intent1);
 
 
         }

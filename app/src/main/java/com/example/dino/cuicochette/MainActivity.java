@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.google.common.hash.Hashing;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -21,6 +22,7 @@ import com.google.gson.JsonParser;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
+import java.nio.charset.Charset;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
@@ -32,9 +34,8 @@ public class MainActivity extends AppCompatActivity {
     EditText pwd ;
     String pwd_t ;
 
-
     Intent intent1;
-
+    String test;
     JsonParser parser = new JsonParser();
 
     @Override
@@ -46,56 +47,41 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.connection);
 
-
-        Button button = (Button) findViewById(R.id.valider);
-        button.setOnClickListener(newListener);
-
     }
 
-    private View.OnClickListener newListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
+        public void connect(View v) {
 
             id = findViewById(R.id.ID);
             id_t = id.getText().toString();
             pwd = findViewById(R.id.PDW);
-            pwd_t = pwd.getText().toString();
+            pwd_t = (Hashing.sha512().hashString(pwd.getText().toString(), Charset.defaultCharset())).toString();
 
-            if (id_t.equals("client"))
-                intent1 = new Intent(MainActivity.this, Formules.class);
-            else
-                intent1 = new Intent(MainActivity.this, CommandeResto.class);
-
-         /*   Log.d("loginenvoye", id_t + "  " + pwd_t + "  " + id + "  " + pwd);
-            intent1 = new Intent(MainActivity.this, Formules.class);
+            intent1 = new Intent();
 
             Ion.with(getApplicationContext())
-                    .load("http://10.0.2.2:3306/connexion?login="+id_t+"&mdp="+pwd_t)
+                    .load("http://10.0.2.2:1234/connexion?login=" + id_t + "&mdp=" + pwd_t)
                     .asJsonObject()
                     .setCallback(new FutureCallback<JsonObject>() {
+                        Intent intent1;
                         @Override
                         public void onCompleted(Exception e, JsonObject result) {
-                            JsonObject jObject = parser.parse(String.valueOf(result)).getAsJsonObject();
-
-                            if (jObject.get("type").equals("table")) {
-                                intent1.putExtra("num_table", jObject.get("numeroTable").toString());
-                                intent1.putExtra("numResto", jObject.get("restaurant").toString());
-                                setContentView(R.layout.formules);
-                            } else if (jObject.get("type").equals("chef")) {
-                                intent1.putExtra("numResto", jObject.get("restaurant").toString());
-                                setContentView(R.layout.plats);
+                            Log.d("elif", "on recup le json");
+                            JsonObject jObject = result;
+                            Log.d("elif", jObject.get("type").getAsString());
+                            if ((jObject.get("type").getAsString()).equals("table")) {
+                                Log.d("elif", "on est une table");
+                                intent1 = new Intent(MainActivity.this, Formules.class);
+                                intent1.putExtra("numTable", jObject.get("numeroTable").getAsString());
+                                intent1.putExtra("numResto", jObject.get("restaurant").getAsString());
+                                MainActivity.this.startActivity(intent1);
+                            } else if ((jObject.get("type").getAsString()).equals("chef")) {
+                                Log.d("elif", "on est un chef");
+                                intent1 = new Intent(MainActivity.this, CommandeResto.class);
+                                Log.d("elif", jObject.toString());
+                                intent1.putExtra("numResto", jObject.get("restaurant").getAsString());
+                                MainActivity.this.startActivity(intent1);
                             }
                         }
                     });
-
-*/
-
-            startActivity(intent1);
-
-
         }
-    };
-
-
-
 }

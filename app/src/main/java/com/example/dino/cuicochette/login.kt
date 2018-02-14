@@ -13,7 +13,7 @@ class login {
         fun checkCo(id_t: String, pwd_t: String): Boolean {
             var result: String? = ""
             var ok: Boolean = false
-            val localLoginString = "http://10.0.2.2:3306/connexion?login=chef&mdp=12345"
+            val localLoginString = "http://10.0.2.2:1234/connexion?login=chef&mdp=12345"
 
             try {
                 val jsonResponse = JSONObject(localLoginString)

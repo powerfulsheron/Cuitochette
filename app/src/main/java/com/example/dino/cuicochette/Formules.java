@@ -39,7 +39,7 @@ import java.util.Map;
 public class Formules extends AppCompatActivity {
 
     //Ne pas oublier de changer le port
-    private String localPlatString = "http://10.0.2.2:3306/plats?restaurant=1";
+    private String localPlatString = "http://10.0.2.2:1234/plats?restaurant=1";
 
     ListView listView;
     Button valider;

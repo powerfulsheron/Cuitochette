@@ -38,7 +38,7 @@ import java.util.Map;
 public class CommandeResto extends AppCompatActivity {
 
     //Ne pas oublier de changer le port
-    private String localCommandeString = "http://10.0.2.2:3306/commandes?restaurant=1";
+    private String localCommandeString = "http://10.0.2.2:1234/commandes?restaurant=";
 
     ListView listView;
     Button valider;
@@ -57,7 +57,7 @@ public class CommandeResto extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.commanderesto);
 
-        initList();
+        initList(getIntent().getStringExtra("numResto"));
         listView = (ListView) findViewById(R.id.listView1);
         courant = new ArrayList<String>(Arrays.asList("none"));
         valider = (Button) findViewById(R.id.valider);
@@ -110,32 +110,46 @@ public class CommandeResto extends AppCompatActivity {
 
     List<Map<String, String>> countryList = new ArrayList<Map<String, String>>();
 
-    private void initList() {
+    private void initList(String restaurant) {
 
         Ion.with(getApplicationContext())
-                .load(localCommandeString)
+                .load(localCommandeString+restaurant)
                 .asJsonObject()
                 .setCallback(new FutureCallback<JsonObject>() {
                     @Override
                     public void onCompleted(Exception e, JsonObject result) {
                         JsonObject jObject = parser.parse(String.valueOf(result)).getAsJsonObject();
                         for (Map.Entry<String, JsonElement> entry: jObject.entrySet()) {
-                            countryList.add(plat("commande", "Commande n°"+entry.getKey()));
                             JsonObject child = parser.parse(String.valueOf(entry.getValue())).getAsJsonObject();
+                            String table = String.valueOf(child.get("table").getAsString());
+                            String resultString = "Commande n°"+entry.getKey()+" Table N°"+table+"\n";
+                            String entreeResult ="";
+                            String platResult="";
+                            String dessertResult="";
+                            String boissonResult="";
                             String status = String.valueOf(child.get("status"));
-                            Log.i("status", status);
                             String plats= String.valueOf(child.get("plats"));
-                            Log.i("plats", plats);
                             JsonArray jsonArray = (JsonArray) child.get("plats");
                             for (Object object: jsonArray){
                                 JsonObject jsonObject = (JsonObject) object;
-                                label = String.valueOf(((JsonObject) object).get("label"));
-                                quantite = String.valueOf(((JsonObject) object).get("quantite"));
-                                Log.i("label", label);
-                                Log.i("quantite",  quantite);
-                                Log.i("array", String.valueOf(jsonArray));
-                                countryList.add(plat("commande", label + " Quantité : "+quantite));
+                                String type=jsonObject.get("type").getAsString();
+                                label = String.valueOf(((JsonObject) object).get("label").getAsString());
+                                quantite = String.valueOf(((JsonObject) object).get("quantite").getAsString());
+                                if(type.equals("entree")){
+                                    entreeResult+=quantite+" "+label+"\n";
+                                }
+                                if(type.equals("plat")){
+                                    platResult+=quantite+" "+label+"\n";
+                                }
+                                if(type.equals("dessert")){
+                                    dessertResult+=quantite+" "+label+"\n";
+                                }
+                                if(type.equals("boisson")){
+                                    boissonResult+=quantite+" "+label+"\n";
+                                }
                             }
+                            resultString+=entreeResult+platResult+dessertResult+boissonResult;
+                            countryList.add(plat("commande", resultString));
                         }
                     }
                 });

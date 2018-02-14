@@ -1,5 +1,5 @@
 // Port to listen requests from
-var port = 3306;
+var port = 1234;
 
 // Modules to be used
 var express = require('express');
@@ -12,9 +12,8 @@ var Map = require("collections/map");
 var connection = mysql.createConnection({
   host     : 'localhost',
   user     : 'root',
-  password : 'root',
+  password : '',
   database: 'cuitochette',
-  	socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock'
 });
 
 app.get("/plats", function(req, res, next) {
@@ -60,13 +59,14 @@ app.get("/commandes2", function(req, res, next) {
 app.get("/commandes", function(req, res, next) {
 	var restaurant = req.query.restaurant;
 	var tableauResult= new Object();
-	connection.query('SELECT CP.commande, C.taable, C.status, P.label, CP.quantite FROM PLAT AS P, COMMANDE AS C, COMMANDE_PLAT AS CP WHERE CP.plat=P.id AND C.id=CP.commande AND C.restaurant=?',restaurant,function(err, rows, fields) {
+	connection.query('SELECT CP.commande, C.taable, C.status, P.label, P.type, CP.quantite FROM PLAT AS P, COMMANDE AS C, COMMANDE_PLAT AS CP WHERE CP.plat=P.id AND C.id=CP.commande AND C.restaurant=?',restaurant,function(err, rows, fields) {
 		if (err) throw err;
 		for (var i = 0; i < rows.length; i++) {
 			if(rows[i].commande in tableauResult){
 				var plat = new Object();
 				plat["label"]=rows[i].label;
-				plat["quantite"]=rows[i].quantite;
+				plat["type"]=rows[i].type;
+				plat["quantite"]=rows[i].quantite;	
 				tableauResult[rows[i].commande]["plats"].push(plat);
 			}else{
 				var tableauCommande = new Object();
@@ -75,6 +75,7 @@ app.get("/commandes", function(req, res, next) {
 				var tableauPlats = [];
 				var plat = new Object();
 				plat["label"]=rows[i].label;
+				plat["type"]=rows[i].type;
 				plat["quantite"]=rows[i].quantite;
 				tableauPlats.push(plat);
 				tableauCommande["plats"]=tableauPlats;

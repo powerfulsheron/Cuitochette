@@ -1,7 +1,7 @@
 # Cuitochette
 ## Valier Méryl
 ## Baptiste Gautier
-## Tygrou Julien
+## Guillouzic Julien
 ## Canavaggio Lorenzo
 
 

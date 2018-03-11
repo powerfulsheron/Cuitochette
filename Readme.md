@@ -1,8 +1,11 @@
 # Cuitochette
-## Valier Méryl
-## Gautier Baptiste 
-## Guillouzic Julien
-## Canavaggio Lorenzo
+
+## Android Studio project in group with Node.JS fullRest Web Service for MySQL queries
+
+### Valier Méryl
+### Gautier Baptiste 
+### Guillouzic Julien
+### Canavaggio Lorenzo
 
 
 

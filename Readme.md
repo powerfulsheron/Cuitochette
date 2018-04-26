@@ -1,6 +1,6 @@
 # Cuitochette
 
-## Android Studio project in group with Node.JS fullRest Web Service for MySQL queries
+## Android Studio project in group with Node.JS fullRest Web Service with MySQL
 
 ### Valier Méryl
 ### Gautier Baptiste 
